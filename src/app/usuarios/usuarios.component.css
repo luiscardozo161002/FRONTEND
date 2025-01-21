@@ -1,0 +1,53 @@
+    /* Estilo para el área de trabajo */
+  .main-area {
+    background-color: #334155; /* Color de fondo oscuro para el área de trabajo */
+    color: #0a0e18; /* Color de texto claro */
+    min-height: 100vh; /* Asegura que ocupe todo el alto de la ventana */
+    padding: 20px; /* Espaciado interno */
+  }
+  
+  /* Estilo para tarjetas u otros contenedores en el área de trabajo */
+  .card {
+    background-color: #1e293b; /* Color más claro que el fondo del área de trabajo */
+    color: #ffffff; /* Color blanco para el texto de las tarjetas */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno en tarjetas */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Sombra sutil */
+  }
+  .tabla-usuarios {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .tabla-usuarios th,
+  .tabla-usuarios td {
+    border: 1px solid #4a5568; /* Gris oscuro */
+    text-align: left;
+    padding: 8px;
+  }
+  
+  .tabla-usuarios thead {
+    background-color: #2d3748; /* Fondo del encabezado */
+    color: white;
+  }
+  
+  .tabla-usuarios tr:hover {
+    background-color: #4a5568; /* Fondo al pasar el mouse */
+  }
+  
+  .boton-agregar {
+    background-color: #4caf50; /* Verde */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  
+  .boton-agregar:hover {
+    background-color: #45a049; /* Verde más oscuro */
+  }
+  

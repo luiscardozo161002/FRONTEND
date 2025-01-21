@@ -1,0 +1,21 @@
+
+  .tabla-libros-digitales th {
+    text-align: left;
+    padding: 0.5rem;
+  }
+  
+  .tabla-libros-digitales td {
+    padding: 0.5rem;
+  }
+  
+  .sidebar {
+    position: sticky;
+    top: 0;
+  }
+  
+  button {
+    transition: background-color 0.3s ease;
+  }
+  
+ 
+  

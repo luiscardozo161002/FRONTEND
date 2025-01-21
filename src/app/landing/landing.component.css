@@ -1,0 +1,25 @@
+.bg-gray-900 {
+  background-color: #1a202c; /* Color oscuro para el encabezado */
+}
+
+.text-white {
+  color: #ffffff; /* Color blanco para el texto */
+}
+
+.text-purple-300 {
+  color: #d6bcfa; /* Color púrpura claro para el subtítulo */
+}
+
+.bg-blue-600 {
+  background-color: #2563eb; /* Color más oscuro para el botón */
+}
+
+.hover\:bg-blue-500:hover {
+  background-color: #3b82f6; /* Color más claro para el botón al pasar el mouse */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}

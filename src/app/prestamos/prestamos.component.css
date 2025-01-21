@@ -1,0 +1,47 @@
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  form {
+    background-color: #1f2937; /* Tailwind gray-800 */
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  table th,
+  table td {
+    border: 1px solid #374151; /* Tailwind gray-700 */
+    text-align: left;
+    padding: 8px;
+  }
+  
+
+  /* styles.css */
+
+/* Aplicar estilos básicos de scroll */
+.scrollbar-custom {
+  overflow-y: auto;
+}
+
+/* Ancho de la barra de scroll */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Color del track (fondo del scroll) */
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #111827;  /* bg-gray-800 de Tailwind */
+}
+
+/* Color y forma del thumb (la barra de scroll en sí) */
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #374151; /* bg-orange-500 de Tailwind */
+  border-radius: 5px;
+  border: 2px solid #1f2937; /* Añadir un borde para un mejor contraste */
+}
+
+/* Cambio de color al pasar el mouse por el thumb */
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #374151; /* bg-orange-600 de Tailwind */
+}

@@ -1,0 +1,83 @@
+.perfil-contenedor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin-left: 16rem;
+  background-color: #1e293b; 
+  color: white;
+}
+
+.foto_perfil {
+  margin-bottom: 1.5rem;
+}
+
+.foto-redonda {
+  width: 9rem;
+  height: 9rem;
+  border-radius: 50%;
+  border: 4px solid white;
+}
+
+.tarjetas-contenedor {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 60rem;
+  padding: 1rem; 
+}
+
+.tarjeta {
+  background-color: #2d3748;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-height: 12rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tarjeta h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.tarjeta p {
+  margin: 0.5rem 0;
+  color: #a0aec0;
+}  
+
+.cursor-pointer {
+  cursor: pointer;
+}
+/* Ocultar la barra lateral en pantallas pequeñas */
+@media (max-width: 767px) {
+.sidebar {
+  display: none;
+}
+.main-area {
+  width: 100%;
+}
+}
+
+/* Mostrar la barra lateral en pantallas medianas y grandes */
+@media (min-width: 768px) {
+.sidebar {
+  display: block;
+  width: 25%;
+}
+.main-area {
+  width: 75%;
+}
+}
+
+/* Centrar el contenido */
+.main-area {
+display: flex;
+justify-content: center;
+align-items: center;
+}

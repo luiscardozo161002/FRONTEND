@@ -1,0 +1,29 @@
+<div class="relative h-screen">
+  <!-- Contenedor de la Imagen de Fondo -->
+  <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://www.sydle.com/blog/assets/post/biblioteca-digital-63e521409e3c274f1050e336/capa%20biblioteca%20digital.png?w=1200');">
+    <!-- Superposición oscura -->
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+  </div>
+
+  <!-- Borde Superior -->
+  <div class="bg-gray-900 shadow-md p-4 flex justify-between items-center relative z-10">
+    <div class="text-3xl font-bold text-white">BookUnit</div>
+    <div>
+      <a routerLink="/" class="px-4 text-blue-400 hover:text-blue-300">Home</a>
+      <a routerLink="/about" class="px-4 text-blue-400 hover:text-blue-300">About</a>
+      <a routerLink="/contact" class="px-4 text-blue-400 hover:text-blue-300">Contact</a>
+    </div>
+  </div>
+
+  <!-- Contenedor del contenido central -->
+  <div class="flex flex-col items-center justify-center h-full text-center relative z-10">
+    <h1 class="text-6xl font-bold text-white drop-shadow-md">Bienvenido a tu Biblioteca Digital</h1>
+    <p class="mt-4 text-3xl font-bold text-purple-300 drop-shadow-md">¡El conocimiento a un solo clic de distancia!</p>
+    <button
+      (click)="iniciarSesion()"
+      class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-500 transition duration-300 mt-6"
+    >
+      Comenzar
+    </button>
+  </div>
+</div>

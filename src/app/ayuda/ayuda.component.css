@@ -1,0 +1,31 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Ocultar la barra lateral en pantallas pequeñas */
+@media (max-width: 767px) {
+.sidebar {
+  display: none;
+}
+.main-area {
+  width: 100%;
+}
+}
+
+/* Mostrar la barra lateral en pantallas medianas y grandes */
+@media (min-width: 768px) {
+.sidebar {
+  display: block;
+  width: 25%;
+}
+.main-area {
+  width: 75%;
+}
+}
+
+/* Centrar el contenido */
+.main-area {
+display: flex;
+flex-direction: column;
+align-items: center;
+}
