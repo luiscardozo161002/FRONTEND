@@ -307,7 +307,7 @@
     </div>
 
     <!-- Tabla de libros -->
-    <div class="w-[100%] max-h-[600px] scrollbar-custom border border-gray-500 shadow-lg">
+    <div class="w-[100%] max-h-[150px] scrollbar-custom border border-gray-500 shadow-lg">
       <table class="w-[80%] border-collapse shadow-lg">
         <thead>
           <tr class="bg-gray-700 text-white">
@@ -324,7 +324,7 @@
         <tbody>
           <tr
               *ngFor="let libro of libros"
-              class="bg-gray-800 text-gray-300 hover:bg-gray-700 transition duration-200"
+              class="sticky top-0 bg-gray-800 text-gray-300 hover:bg-gray-700 transition duration-200"
           >
               <td class="border border-gray-500 p-3">{{ libro.titulo }}</td>
               <td class="border border-gray-500 p-3">{{ libro.isbn }}</td>
@@ -367,7 +367,110 @@
       </tbody>
       
       </table>
+
     </div>
+
+    <div class="w-[100%] flex gap-5 max-h-[150px] scrollbar-custom  shadow-lg mt-5">
+   
+   
+    <table class="w-[50%] border-collapse shadow-lg border border-gray-500">
+      <thead>
+        <tr class="bg-gray-700 text-white">
+          <th class="border border-gray-500 p-3 text-left">Categoria</th>
+          <th class="border border-gray-500 p-3 text-left">Descripcion</th>
+          <th class="border border-gray-500 p-3 text-left">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr
+            *ngFor="let categoria of categorias"
+            class="sticky top-0 bg-gray-800 text-gray-300 hover:bg-gray-700 transition duration-200"
+        >
+            <td class="border border-gray-500 p-3">{{ categoria.nombre }}</td>
+            <td class="border border-gray-500 p-3">{{ categoria.descripcion }}</td>
+
+            
+            <td class="border flex border-gray-500 p-3 gap-2">
+              <!-- Botón para editar -->
+              <button
+                (click)="openEditCategoriaModal(categoria.id, categoria.nombre, categoria.descripcion)"
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-2 rounded shadow-md"
+              >
+                Editar
+              </button>
+      
+              <!-- Botón para eliminar -->
+              <button
+                (click)="deleteCategoria(categoria.id)"
+                class="bg-orange-500 hover:bg-orange-600 text-white font-bold p-2 rounded shadow-md"
+              >
+                Eliminar
+              </button>
+            </td>
+        </tr>
+    </tbody>
+
+    <div class="flex fixed bottom-0 mb-4">
+      <button
+        (click)="openRegisterCategoriaModal()"
+        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md"
+      >
+        Nueva Categoría
+      </button>
+    </div>
+    
+    </table>
+
+    <table class="w-[50%] border-collapse shadow-lg border border-gray-500">
+      <thead>
+        <tr class="bg-gray-700 text-white">
+          <th class="border border-gray-500 p-3 text-left">Genero</th>
+          <th class="border border-gray-500 p-3 text-left">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr
+            *ngFor="let genero of generos"
+            class="sticky top-0 bg-gray-800 text-gray-300 hover:bg-gray-700 transition duration-200"
+        >
+            <td class="border border-gray-500 p-3">{{ genero.name }}</td>
+
+            
+            <td class="border flex border-gray-500 p-3 gap-2">
+              <!-- Botón para editar -->
+              <button
+                (click)="openEditGeneroModal(genero.id, genero.name)"
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold p-2 rounded shadow-md"
+              >
+                Editar
+              </button>
+      
+              <!-- Botón para eliminar -->
+              <button
+                (click)="deleteGenero(genero.id)"
+                class="bg-orange-500 hover:bg-orange-600 text-white font-bold p-2 rounded shadow-md"
+              >
+                Eliminar
+              </button>
+            </td>
+        </tr>
+    </tbody>
+
+    <div class="flex fixed bottom-0 mb-4">
+      <button
+        (click)="openRegisterGeneroModal()"
+        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow-md"
+      >
+        Nuevo Genéro
+      </button>
+    </div>
+    
+    </table>
+  </div>
+
+
   </div>
 
 </div>

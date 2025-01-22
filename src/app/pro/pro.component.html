@@ -13,7 +13,7 @@
   <div class="flex w-[100%] h-[100vh] justify-between">
 
   <!-- Ícono del menú hamburguesa -->
-  <div class="fixed top-4 cursor-pointer left-2 z-30" (click)="toggleSidebar()">
+  <div *ngIf="!isAdmin" class="fixed top-4 cursor-pointer left-2 z-30" (click)="toggleSidebar()">
     <div class="bg-white text-black rounded-full p-3">
       <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -34,9 +34,8 @@
       </svg>
     </div>  
   </div>
-
   <!-- Sidebar -->
-  <div class="fixed inset-0 bg-black bg-opacity-50 z-40" [class.hidden]="!isSidebarVisible">
+  <div *ngIf="!isAdmin" class="fixed inset-0 bg-black bg-opacity-50 z-40" [class.hidden]="!isSidebarVisible">
       <div class="h-[100%] xl:w-[15%] fixed p-1 bg-gray-800 z-[1000] sm:z-[10000] sm:w-[100%]"
        [class.hidden]="!isSidebarVisible"
       > 
@@ -298,14 +297,159 @@
       </div>
   </div>
 
-    <!-- Área de trabajo principal -->
-    <div [class.right-[0%]]="!isSidebarVisible" [class.w-[90%]]="!isSidebarVisible" class="flex flex-col relative right-[-15%] w-[85%] p-2 mt-5">
+  <!-- Ícono del menú hamburguesa - Si el usuario registrado es pro y ah pagado-->
+  <div *ngIf="isUserPro && hasPaid" class="fixed top-4 cursor-pointer left-2 z-30" (click)="toggleSidebar()">
+      <div class="bg-white text-black rounded-full p-3">
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2"
+      >
+        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+        <path d="M4 6l16 0" />
+        <path d="M4 12l16 0" />
+        <path d="M4 18l16 0" />
+        </svg>
+      </div>  
+  </div>
+  <!--Sidebar - Si el usuario registrado es pro-->
+  <div *ngIf="isUserPro && hasPaid" class="fixed inset-0 bg-black bg-opacity-50 z-40" [class.hidden]="!isSidebarVisible">
+        <div class="h-[100%] xl:w-[15%] fixed p-1 bg-gray-800 z-[1000] sm:z-[10000] sm:w-[100%]"
+         [class.hidden]="!isSidebarVisible"
+        > 
+          <div class="rounded-full cursor-pointer text-black bg-white p-2 fixed top-3 left-44 shadow-lg" (click)="toggleSidebar()">
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-left"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l4 4" /><path d="M5 12l4 -4" /></svg>
+          </div>
+          <h1
+          class="text-2xl font-bold h-[10%] p-2 gap-2 text-center flex items-center text-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-book"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+            <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
+            <path d="M3 6l0 13" />
+            <path d="M12 6l0 13" />
+            <path d="M21 6l0 13" />
+          </svg>
+          BookUnit
+          </h1>
+          <ul
+          class="flex flex-col justify-start p-2 h-[90%] text-gray-300 border border-solid border-gray-100 rounded-md"
+        >
+              <li class="flex items-center p-2 hover:bg-slate-600 hover:rounded-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-library"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M7 3m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z"
+                  />
+                  <path
+                    d="M4.012 7.26a2.005 2.005 0 0 0 -1.012 1.737v10c0 1.1 .9 2 2 2h10c.75 0 1.158 -.385 1.5 -1"
+                  />
+                  <path d="M11 7h5" />
+                  <path d="M11 10h6" />
+                  <path d="M11 13h3" />
+                </svg>
+                <a href="/libros-digitales" class="ml-2 hover:text-white"
+                  >Libros Digitales</a
+                >
+              </li>
+              <li class="flex items-center p-2 hover:bg-slate-600 hover:rounded-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-diamond"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M6 5h12l3 5l-8.5 9.5a.7 .7 0 0 1 -1 0l-8.5 -9.5l3 -5" />
+                  <path d="M10 12l-2 -2.2l.6 -1" />
+                </svg>
+                <a href="/pro" class="ml-2 hover:text-white">Cambiar a Pro</a>
+              </li>
+              
+              <li class="flex items-center p-2 hover:bg-slate-600 hover:rounded-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="icon icon-tabler icons-tabler-outline icon-tabler-arrow-right"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M5 12l14 0" />
+                  <path d="M13 18l6 -6" />
+                  <path d="M13 6l6 6" />
+                </svg>
+                <a class="ml-2" (click)="onSignOut()">Cerrar Sesión</a>
+              </li>
+          </ul>
+        </div>
+  </div>
+
+
+  <!-- Área de trabajo principal -->
+  <div [class.right-[0%]]="!isSidebarVisible" [class.w-[90%]]="!isSidebarVisible" class="flex flex-col relative right-[-15%] w-[85%] p-2 mt-5">
       <div class="flex flex-col items-center justify-center w-[100%]">
         <div class="foto_perfil mb-2">
           <img [src]="imagenDCG" alt="imagen de Diego" class="rounded-full mx-auto" style="width: 80px; height: 80px; object-fit: cover;" />
         </div>
         
         <div class="flex flex-col justify-center">
+
+          <div *ngIf="isUserPro && hasPaid" class="pro-content flex justify-center">
+            <p>¡Bienvenido, usuario PRO!.</p>
+          </div>
+          <div *ngIf="!isUserAdmin" class="payment-content flex justify-center">
+            <p>¡Bienvenido, administrador PRO!.</p>
+          </div>
+          <div *ngIf="isUserPro && !hasPaid" class="payment-content flex justify-center">
+            <p>Por favor, realiza el pago con la bibliotecaria para acceder a las funcionalidades PRO.</p>
+          </div>
+         
+
+          <!--<div *ngIf="!isUserPro" class="regular-content flex justify-center">
+            <p>No estás registrado como usuario PRO.</p>
+          </div>-->
           
           <div class="tarjetas-contenedor cursor-pointer grid grid-cols-1 md:grid-cols-2 gap-2">
             <!-- Tarjeta izquierda -->
@@ -324,8 +468,7 @@
             </div>
           </div>
           
-          <div>
-                          <!-- Tabla de usuarios -->
+          <div *ngIf="isUser" >
             <div class="w-[100%] max-h-[600px] scrollbar-custom  border border-gray-500 shadow-lg">
               <table class="w-[100%] border-collapse shadow-lg">
                 <thead>
@@ -374,14 +517,64 @@
                 
               </table>
             </div>
-     
           </div>
+
+          <div *ngIf="isAdmin" >
+            <div class="w-[100%] max-h-[600px] scrollbar-custom  border border-gray-500 shadow-lg">
+              <table class="w-[100%] border-collapse shadow-lg">
+                <thead>
+                  <tr class="bg-gray-700 text-white">
+                    <th class="border border-gray-500 p-2">Nombre</th>
+                    <th class="border border-gray-500 p-2">Email</th>
+                    <th class="border border-gray-500 p-2">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let usuarioPro of usuariosPro" class="bg-gray-800 text-gray-300 hover:bg-gray-700 transition duration-200">
+                    <td class="border border-gray-500 p-2">{{ usuarioPro.name }}</td>
+                    <td class="border border-gray-500 p-2">{{ usuarioPro.email }}</td>
+                    <td class="flex items-center justify-center border border-gray-500 p-2 gap-2">
+                      <!-- Botón de editar -->
+                      <button 
+                        class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                        (click)="openUpdateModal(usuarioPro.id, usuarioPro.name)">
+                        Editar
+                      </button>
+                      <!-- Botón de eliminar -->
+                      <button 
+                        (click)=" deleteUsuario(usuarioPro.id)"
+                        class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+                        Eliminar
+                      </button>
+
+
+                      <button 
+                      (click)="openRegisterSubscripcionModal()" 
+                      class="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded">
+                      Registrar Subscripción
+                      </button>
+                    
+
+                      <button 
+                      (click)="openRegisterPaymentModal(usuarioPro.id)" 
+                      class="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded">
+                      Registrar Pago
+                      </button>
+                    
+                    
+                    </td>
+                  </tr>
+                </tbody>
+                
+              </table>
+            </div>
+          </div>
+          
         </div>
 
 
       </div>
-    </div>
-
+  </div>
 
   </div>
 </body>

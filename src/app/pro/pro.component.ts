@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 
 interface Usuario {
   id: string;
@@ -34,11 +34,20 @@ interface Products{
   currency: string; 
 }
 
+interface Pagos{
+  id: string;
+  subtotal: number;
+  total: number;
+  customer: string;
+  product: string;
+  url: string;
+};
+
 @Component({
   selector: 'app-perfil',
   standalone: true,
   templateUrl: './pro.component.html',
-  imports: [NgFor]
+  imports: [NgFor, NgIf]
 })
 export class ProComponent {
 
@@ -55,6 +64,7 @@ export class ProComponent {
   customers: Customers[] = [];  
   usuariosPro: UsuariosPro[] = [];
   productos: Products[] = [];
+  pagos: Pagos[] = [];
 
   ////////////////////////////////////////////////////////////////////////
 
@@ -69,9 +79,44 @@ export class ProComponent {
   }
 
   ////////////////////////////////////////////////////////////////////////
+
+  isUser: boolean = false; // Controla si el usuario es de tipo 'user'
+  isAdmin: boolean = false; // Controla si el usuario es de tipo 'admin'
+
+  async loggedUser(): Promise<void> {
+    const loggedUser = localStorage.getItem('user'); // Obtener el usuario desde localStorage
+  
+    if (loggedUser) {
+      try {
+        const user = JSON.parse(loggedUser); // Parsear el usuario desde JSON
+        const userRole = user.rol; // Obtener el rol del usuario
+  
+        // Verificar si el rol es 'user'
+        if (userRole === 'user') {
+          this.isUser = true; // Aplicar clase hidden
+          console.log('El usuario es user');
+        }else if (userRole === 'admin') {
+          this.isAdmin = true; // Aplicar clase hidden
+          console.log('El usuario es admin');
+        }else {
+          this.isUser = false;
+        }
+      } catch (error) {
+        console.error('Error al parsear los datos del usuario:', error);
+        this.isUser = false; // En caso de error, no ocultar el div
+      }
+    } else {
+      this.isUser = false; // Si no hay usuario en localStorage
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////
+
+  ////////////////////////////////////////////////////////////////////////
   
   async openRegisterModal(): Promise<void> {
     try {
+
         const usuariosResponse = await axios.get<{ username: string; email: string }[]>(
             'http://localhost:3001/api/v1/users'
         );
@@ -238,13 +283,56 @@ export class ProComponent {
   }
   
   ////////////////////////////////////////////////////////////////////////
+  isUserPro: boolean = false; 
+  hasPaid: boolean = false;
+  isUserAdmin: boolean = false;
+
   async fetchUsuariosPro(): Promise<void> {
     try {
-        const response = await axios.get<UsuariosPro[]>('http://localhost:3003/customers/show-all-customers');
-        this.usuariosPro = response.data;  
-        console.log("Datos cargados correctamente usuarios PRO:", this.usuariosPro);
+      // Obtener la lista de usuarios PRO
+      const response = await axios.get<UsuariosPro[]>('http://localhost:3003/customers/show-all-customers');
+      this.usuariosPro = response.data;
+  
+      // Obtener la lista de pagos
+      const responsePayment = await axios.get<Pagos[]>('http://localhost:3003/payments/show-all-payments');
+      this.pagos = responsePayment.data;
+  
+      // Obtener el usuario logueado desde localStorage
+      const userLocalStorage = localStorage.getItem('user');
+      if (userLocalStorage) {
+        const parsedUser = JSON.parse(userLocalStorage); // Parsear el JSON a un objeto
+        const emailUser = parsedUser.email; // Obtener el correo del usuario logueado
+  
+        // Buscar el ID del usuario logueado en la lista de usuarios PRO
+        const loggedUser = this.usuariosPro.find((u) => u.email === emailUser);
+  
+        if (loggedUser) {
+          this.isUserPro = true; // El usuario está registrado como PRO
+  
+          // Verificar si el usuario ha realizado un pago
+          const userHasPaid = this.pagos.some((p) => p.customer === loggedUser.id);
+  
+          if (userHasPaid) {
+            this.hasPaid = true; // El usuario ha realizado el pago
+            console.log('El usuario ha realizado el pago.');
+          } else {
+            this.hasPaid = false; // El usuario no ha realizado el pago
+            console.log('El usuario no ha realizado el pago.');
+          }
+        } else {
+          this.isUserPro = false; // El usuario no está registrado como PRO
+          this.hasPaid = false;
+        }
+      } else {
+        console.error('No hay usuario logueado en localStorage');
+        this.isUserPro = false;
+        this.hasPaid = false;
+      }
+  
+      console.log("Datos cargados correctamente usuarios PRO:", this.usuariosPro);
+      console.log("Pagos cargados correctamente:", this.pagos);
     } catch (error: any) {
-        Swal.fire("Error al obtener datos", error.message, "error");
+      Swal.fire("Error al obtener datos", error.message, "error");
     }
   }
 
@@ -446,6 +534,7 @@ export class ProComponent {
   ngOnInit(): void {
     this.fetchUsuarios();
     this.fetchUsuariosPro();
+    this.loggedUser();
   }
 
 }

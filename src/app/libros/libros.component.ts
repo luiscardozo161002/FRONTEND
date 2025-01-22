@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import Swal from 'sweetalert2';
 import { NgFor } from '@angular/common';
 import axios from 'axios';
+import * as CryptoJS from 'crypto-js';
 
 interface Libro {
   id: string;
@@ -18,6 +19,17 @@ interface Libro {
   } | null;
 }
 
+interface Categoria {
+  id: number;
+  nombre: string;
+  descripcion: string;
+}
+
+interface Genero {
+  id: number;
+  name: string;
+}
+
 @Component({
   selector: 'app-libros',
   standalone: true,
@@ -27,6 +39,8 @@ interface Libro {
 })
 export class LibrosComponent {
   libros: Libro[] = [];
+  categorias: Categoria[] = [];
+  generos: Genero[] = [];
 
   ///////////////////////////////////////////////////////////////////////////////
   isSidebarVisible = false;
@@ -386,15 +400,26 @@ export class LibrosComponent {
     genero: string,
     categoria: string
   ): Promise<void> {
+
+    const secretKey = 'mySecretKey123';
+              
+    // Cifrar los datos
+    const encryptedIsbn = CryptoJS.AES.encrypt(isbn, secretKey).toString();
+    const encryptedTitulo = CryptoJS.AES.encrypt(titulo, secretKey).toString();
+    const encryptedTipo = CryptoJS.AES.encrypt(tipo, secretKey).toString();
+    const encryptedAutor = CryptoJS.AES.encrypt(autor, secretKey).toString();
+    const encryptedGenero = CryptoJS.AES.encrypt(genero, secretKey).toString();
+    const encryptedCategoria = CryptoJS.AES.encrypt(categoria, secretKey).toString();
+
     try {
       await axios.post('http://localhost:3002/api/v1/books', {
         // ✅ Ahora el orden coincide con la tabla
-        isbn,
-        titulo,
-        tipo,
-        autor,
-        generoNombre: genero,
-        categoriaNombre: categoria,
+        isbn: encryptedIsbn,
+        titulo: encryptedTitulo,
+        tipo: encryptedTipo,
+        autor: encryptedAutor,
+        generoNombre: encryptedGenero,
+        categoriaNombre: encryptedCategoria,
       });
       Swal.fire(
         'Libro registrado',
@@ -408,6 +433,308 @@ export class LibrosComponent {
 
   //////////////////////////////////////////////////////////////////////////////
 
+  async fetchCategorias(): Promise<void> {
+    try {
+      // Solicitud a la API para obtener las categorías
+      const response = await axios.get<Categoria[]>('http://localhost:3002/api/v1/categories');
+      this.categorias = response.data;
+  
+      if (this.categorias.length === 0) {
+        Swal.fire('Advertencia', 'No se encontraron categorías.', 'warning');
+      }
+  
+      console.log('Categorías cargadas correctamente:', this.categorias);
+    } catch (error: any) {
+      Swal.fire('Error al obtener las categorías', error.message || 'Error desconocido.', 'error');
+    }
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////
+
+  async deleteCategoria(id: number): Promise<void> {
+    try {
+      const result = await Swal.fire({
+        title: '¿Estás seguro de eliminar esta categoría?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      });
+  
+      if (result.isConfirmed) {
+        await axios.delete(`http://localhost:3002/api/v1/categories/${id}`);
+        Swal.fire('Categoría eliminada', '', 'success');
+        this.fetchCategorias(); // Recargar la lista después de eliminar
+      }
+    } catch (error: any) {
+      Swal.fire('Error al eliminar la categoría', error.response?.data?.message || error.message, 'error');
+    }
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////
+
+  async openEditCategoriaModal(id: number, nombre: string, descripcion: string): Promise<void> {
+    try {
+      const result = await Swal.fire({
+        title: 'Editar Categoría',
+        html: `
+          <div class="flex flex-col">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" class="swal2-input" value="${nombre}">
+            <label for="descripcion">Descripción</label>
+            <input type="text" id="descripcion" class="swal2-input" value="${descripcion}">
+          </div>
+        `,
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Actualizar',
+        preConfirm: () => {
+          const updatedNombre = (document.getElementById('nombre') as HTMLInputElement).value.trim();
+          const updatedDescripcion = (document.getElementById('descripcion') as HTMLInputElement).value.trim();
+  
+          if (!updatedNombre || !updatedDescripcion) {
+            Swal.showValidationMessage('Todos los campos son requeridos');
+            return false;
+          }
+  
+          return { updatedNombre, updatedDescripcion };
+        },
+      });
+  
+      if (result.isConfirmed) {
+        await axios.put(`http://localhost:3002/api/v1/categories/${id}`, {
+          nombre: result.value.updatedNombre,
+          descripcion: result.value.updatedDescripcion,
+        });
+        Swal.fire('Categoría actualizada', 'La categoría se actualizó correctamente.', 'success');
+        this.fetchCategorias();
+      }
+    } catch (error) {
+      Swal.fire('Error', 'No se pudo actualizar la categoría.', 'error');
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  async openRegisterCategoriaModal(): Promise<void> {
+    try {
+      const result = await Swal.fire({
+        title: 'Registrar Categoría',
+        html: `
+          <div class="flex flex-col">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombreInput" class="swal2-input">
+            <label for="descripcion">Descripción</label>
+            <input type="text" id="descripcionInput" class="swal2-input">
+          </div>
+        `,
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Registrar',
+        preConfirm: () => {
+          const secretKey = 'mySecretKey123';
+
+          const nombreInput = (document.getElementById('nombreInput') as HTMLInputElement).value.trim();
+          const descripcionInput = (document.getElementById('descripcionInput') as HTMLInputElement).value.trim();
+          
+          const nombre = CryptoJS.AES.encrypt(nombreInput, secretKey).toString();
+          const descripcion = CryptoJS.AES.encrypt(descripcionInput, secretKey).toString();
+
+          if (!nombre || !descripcion) {
+            Swal.showValidationMessage('Todos los campos son requeridos');
+            return false;
+          }
+  
+          return { nombre, descripcion };
+        },
+      });
+  
+      if (result.isConfirmed) {
+        await axios.post('http://localhost:3002/api/v1/categories', {
+          nombre: result.value.nombre,
+          descripcion: result.value.descripcion,
+        });
+        Swal.fire('Categoría registrada', 'La categoría se registró correctamente.', 'success');
+        this.fetchCategorias();
+      }
+    } catch (error) {
+      Swal.fire('Error', 'No se pudo registrar la categoría.', 'error');
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////
+
+  async fetchGeneros(): Promise<void> {
+    try {
+      // Solicitud a la API para obtener los géneros
+      const response = await axios.get<Genero[]>('http://localhost:3002/api/v1/genres');
+      this.generos = response.data;
+  
+      if (this.generos.length === 0) {
+        Swal.fire('Advertencia', 'No se encontraron géneros.', 'warning');
+      }
+  
+      console.log('Géneros cargados correctamente:', this.generos);
+    } catch (error: any) {
+      Swal.fire(
+        'Error al obtener los géneros',
+        error.response?.data?.message || 'Error desconocido.',
+        'error'
+      );
+    }
+  }
+  
+  ////////////////////////////////////////////////////////////////////////////
+
+  async deleteGenero(id: number): Promise<void> {
+    try {
+      const result = await Swal.fire({
+        title: '¿Estás seguro de eliminar este género?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+      });
+  
+      if (result.isConfirmed) {
+        await axios.delete(`http://localhost:3002/api/v1/genres/${id}`);
+        Swal.fire('Género eliminado', '', 'success');
+        this.fetchGeneros(); // Recargar la lista después de eliminar
+      }
+    } catch (error: any) {
+      Swal.fire(
+        'Error al eliminar el género',
+        error.response?.data?.message || error.message,
+        'error'
+      );
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+
+  async openEditGeneroModal(id: number, name: string): Promise<void> {
+    try {
+      const result = await Swal.fire({
+        title: 'Editar Género',
+        html: `
+          <div class="flex flex-col">
+            <label for="name">Nombre</label>
+            <input type="text" id="name" class="swal2-input" value="${name}">
+          </div>
+        `,
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Actualizar',
+        preConfirm: () => {
+          const updatedName = (document.getElementById('name') as HTMLInputElement).value.trim();
+  
+          if (!updatedName) {
+            Swal.showValidationMessage('El nombre es requerido');
+            return false;
+          }
+  
+          return { updatedName };
+        },
+      });
+  
+      if (result.isConfirmed) {
+        await axios.put(`http://localhost:3002/api/v1/genres/${id}`, {
+          name: result.value.updatedName,
+        });
+        Swal.fire('Género actualizado', 'El género se actualizó correctamente.', 'success');
+        this.fetchGeneros(); // Recargar la lista después de actualizar
+      }
+    } catch (error: any) {
+      Swal.fire('Error', 'No se pudo actualizar el género.', 'error');
+    }
+  }
+  
+  //////////////////////////////////////////////////////////////////////////
+
+  /*async openRegisterGeneroModal(): Promise<void> {
+    try {
+      const result = await Swal.fire({
+        title: 'Registrar Género',
+        html: `
+          <div class="flex flex-col">
+            <label for="nameInput">Nombre</label>
+            <input type="text" id="nameInput" class="swal2-input">
+          </div>
+        `,
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Registrar',
+        preConfirm: () => {
+          const secretKey = 'mySecretKey123';
+  
+          const nameInput = (document.getElementById('nameInput') as HTMLInputElement).value.trim();
+  
+          if (!nameInput) {
+            Swal.showValidationMessage('El nombre es requerido');
+            return false;
+          }
+  
+          const name = CryptoJS.AES.encrypt(nameInput, secretKey).toString();
+          return { name };
+        },
+      });
+  
+      if (result.isConfirmed) {
+        await axios.post('http://localhost:3002/api/v1/genres', {
+          nombre: result.value.name, // Cambiar a 'nombre'
+        });        
+        Swal.fire('Género registrado', 'El género se registró correctamente.', 'success');
+        this.fetchGeneros(); // Recargar la lista después de registrar
+      }
+    } catch (error: any) {
+      Swal.fire('Error', 'No se pudo registrar el género.', 'error');
+    }
+  }*/
+  
+  async openRegisterGeneroModal(): Promise<void> {
+      try {
+        const result = await Swal.fire({
+          title: 'Registrar Género',
+          html: `
+            <div class="flex flex-col">
+              <label for="nameInput">Nombre</label>
+              <input type="text" id="nameInput" class="swal2-input">
+            </div>
+          `,
+          showCancelButton: true,
+          cancelButtonText: 'Cancelar',
+          confirmButtonText: 'Registrar',
+          preConfirm: () => {
+            const secretKey = 'mySecretKey123';
+            const nameInput = (document.getElementById('nameInput') as HTMLInputElement).value.trim();
+    
+            if (!nameInput) {
+              Swal.showValidationMessage('El nombre es requerido');
+              return false;
+            }
+    
+            const name = CryptoJS.AES.encrypt(nameInput, secretKey).toString();
+            console.log('Cifrado (name):', name); // Debug
+            return { name };
+          },
+        });
+    
+        if (result.isConfirmed) {
+          console.log('Enviando al backend:', { nombre: result.value.name }); // Debug
+          await axios.post('http://localhost:3002/api/v1/genres', {
+            nombre: result.value.name,
+          });
+          Swal.fire('Género registrado', 'El género se registró correctamente.', 'success');
+          this.fetchGeneros();
+        }
+      } catch (error: any) {
+        Swal.fire('Error', error.response?.data?.message || 'No se pudo registrar el género.', 'error');
+      }
+  }
+      
+  ////////////////////////////////////////////////////////////////////////////
   onSignOut(): void {
     Swal.fire({
       title: '¿Estás seguro de cerrar sesión?',
@@ -429,5 +756,8 @@ export class LibrosComponent {
 
   ngOnInit() {
     this.fetchLibros();
+    this.fetchCategorias();
+    this.fetchGeneros();
   }
+
 }
